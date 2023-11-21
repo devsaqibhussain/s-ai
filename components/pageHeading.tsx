@@ -6,13 +6,23 @@ interface pageHeadingProps {
   description: string;
   icon: LucideIcon;
   color?: string;
-  margin?: string
+  margin?: string;
+  bgColor?: string;
 }
 
-const PageHeading = ({ title, description, icon: Icon, color, margin }: pageHeadingProps) => {
+const PageHeading = ({
+  title,
+  description,
+  icon: Icon,
+  color,
+  margin,
+  bgColor
+}: pageHeadingProps) => {
   return (
     <div className={`flex items-center gap-2 ${margin || "mb-10"}`}>
-      <Icon className={` h-10 w-10 ${color}`}/>
+      <div className={` p-2 ${bgColor} rounded-xl`}>
+        <Icon className={` h-10 w-10 ${color}`} />
+      </div>
       <div className=" -space-y-1">
         <h1 className=" text-xl font-bold">{title}</h1>
         <p className=" text-sm font-semibold text-black/50">{description}</p>

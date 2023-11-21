@@ -2,7 +2,7 @@ import Image from "next/image"
 import waiting from "../assets/waiting.svg"
 const Empty = () => {
   return (
-    <div className="flex flex-col items-center justify-center gap-4 h-full">
+    <div className="flex flex-col items-center justify-center gap-4 h-full mt-10">
         <Image 
             src={waiting}
             alt="empty chat history"

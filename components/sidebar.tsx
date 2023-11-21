@@ -1,7 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { CodeIcon, ImageIcon, LayoutDashboardIcon, MessageSquare, MusicIcon, VideoIcon } from "lucide-react";
+import {
+  CodeIcon,
+  ImageIcon,
+  LayoutDashboardIcon,
+  MessageSquare,
+  MusicIcon,
+  VideoIcon,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
@@ -26,8 +33,8 @@ const tools = [
     title: "Image Generation",
     href: "/image",
     icon: ImageIcon,
-    bgColor: "bg-violet-500/10",
-    color: "text-violet-500",
+    bgColor: "bg-pink-500/10",
+    color: "text-pink-500",
   },
   {
     title: "Video Generation",
@@ -47,8 +54,8 @@ const tools = [
     title: "Code Generation",
     href: "/code",
     icon: CodeIcon,
-    bgColor: "bg-pink-500/10",
-    color: "text-pink-500",
+    bgColor: "bg-violet-500/10",
+    color: "text-violet-500",
   },
 ];
 

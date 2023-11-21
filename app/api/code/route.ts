@@ -9,7 +9,7 @@ const openai = new OpenAI({
 const intructionMessage: OpenAI.ChatCompletionSystemMessageParam = {
   role: "system",
   content:
-    "You're name is S-AI and you are an AI assistant that will answer users questions. Donot give answers to code problems such as react problems, tell them to use 'Code Generator' Menu instead",
+    "You purpose is to generate code according to users props. The code should be wrapped in proper markdown to display it correctly",
 };
 
 export const POST = async (req: Request) => {

@@ -53,21 +53,20 @@ const tools = [
 const DashBoard = () => {
   return (
     <div className=" w-full p-5 sm:p-12 lg:p-20">
-      
-        <PageHeading
-          title="DashBoard"
-          description="One stop for all your AI needs"
-          icon={LucideLayoutDashboard}
-          color="text-cyan-500"
-        />
+      <PageHeading
+        title="DashBoard"
+        description="One stop for all your AI needs"
+        icon={LucideLayoutDashboard}
+        color="text-cyan-500"
+        bgColor="bg-cyan-500/10"
+      />
 
-        {tools.map((tool) => (
-          <Link href={tool.href} key={tool.href}>
-            <DashBoardTools tool={tool}/>
-          </Link>
-        ))}
-      </div>
-    
+      {tools.map((tool) => (
+        <Link href={tool.href} key={tool.href}>
+          <DashBoardTools tool={tool} />
+        </Link>
+      ))}
+    </div>
   );
 };
 

@@ -1,5 +1,5 @@
 "use client";
-import { LucideMessageSquare } from "lucide-react";
+import { CodeIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import OpenAI from "openai";
@@ -7,6 +7,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import Markdown from "react-markdown";
 
 import PageHeading from "@/components/pageHeading";
 import { formSchema } from "@/lib/formSchema";
@@ -16,7 +17,7 @@ import Empty from "@/components/empty";
 import LoadingState from "@/components/loadingState";
 import MessageBar from "@/components/messageBar";
 
-const ConversationPage = () => {
+const CodeGeneration = () => {
   const router = useRouter();
   const [messages, setMessages] = useState<OpenAI.ChatCompletionMessageParam[]>(
     []
@@ -37,9 +38,10 @@ const ConversationPage = () => {
         role: "user",
         content: values.message,
       };
+
       const newMessages = [...messages, userMessage];
       setMessages((current) => [...current, userMessage]);
-      const response = await axios.post("/api/conversation", {
+      const response = await axios.post("/api/code", {
         messages: newMessages,
       });
       setMessages((current) => [...current, response.data]);
@@ -54,27 +56,38 @@ const ConversationPage = () => {
   return (
     <div className="h-[94%] flex flex-col">
       <PageHeading
-        title="Conversation"
-        description="Chat with your very own AI assistant "
-        icon={LucideMessageSquare}
-        color="text-emerald-500"
-        bgColor="bg-emerald-800/10"
+        title="Code Generation"
+        description="Solution to all your coding problems."
+        icon={CodeIcon}
+        bgColor="bg-violet-500/10"
+        color="text-violet-500"
         margin="m-4"
       />
 
       <div className=" flex-1 border-2 border-slate-600/20 rounded-xl p-4 m-4 flex flex-col gap-4 overflow-scroll">
-
         {messages.length === 0 && <Empty />}
 
         {messages.map((message, index) => (
           <div key={index} className={` flex items-start gap-4`}>
             {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-            <p className="mt-2">{message.content?.toString()}</p>
+            <Markdown
+              components={{
+                pre: ({ node, ...props }) => (
+                  <div className=" overflow-auto w-full bg-slate-600/20 p-2 rounded-lg my-2">
+                    <pre {...props} />
+                  </div>
+                ),
+                code: ({ node, ...props }) => (
+                  <code className="bg-slate-600/20 rounded-lg p-1" {...props} />
+                ),
+              }}
+              className="text-sm overflow-hidden leading-7 mt-2"
+            >
+              {message.content?.toString() || ""}
+            </Markdown>
           </div>
         ))}
-
         {isLoading && <LoadingState />}
-      
       </div>
 
       <MessageBar form={form} onSubmit={onSubmit} isLoading={isLoading} />
@@ -82,4 +95,4 @@ const ConversationPage = () => {
   );
 };
 
-export default ConversationPage;
+export default CodeGeneration;
