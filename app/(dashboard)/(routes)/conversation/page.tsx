@@ -15,12 +15,17 @@ import BotAvatar from "@/components/botAvatar";
 import Empty from "@/components/empty";
 import LoadingState from "@/components/loadingState";
 import MessageBar from "@/components/messageBar";
+import { useProModal } from "@/hooks/useProModal";
+import { useToast } from "@/components/ui/use-toast";
 
 const ConversationPage = () => {
+  const { toast } = useToast();
   const router = useRouter();
   const [messages, setMessages] = useState<OpenAI.ChatCompletionMessageParam[]>(
     []
   );
+
+  const proModal = useProModal();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,10 +48,17 @@ const ConversationPage = () => {
         messages: newMessages,
       });
       setMessages((current) => [...current, response.data]);
-      console.log(messages);
       form.reset();
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Something went wrong.",
+          description: `${error.message}`,
+        });
+      }
     } finally {
       router.refresh();
     }
@@ -63,7 +75,6 @@ const ConversationPage = () => {
       />
 
       <div className=" flex-1 border-2 border-slate-600/20 rounded-xl p-4 m-4 flex flex-col gap-4 overflow-scroll">
-
         {messages.length === 0 && <Empty />}
 
         {messages.map((message, index) => (
@@ -74,7 +85,6 @@ const ConversationPage = () => {
         ))}
 
         {isLoading && <LoadingState />}
-      
       </div>
 
       <MessageBar form={form} onSubmit={onSubmit} isLoading={isLoading} />

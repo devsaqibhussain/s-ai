@@ -4,11 +4,10 @@ import DashBoardTools from "@/components/dashboardTools";
 import {
   CodeIcon,
   ImageIcon,
-  LayoutDashboardIcon,
   LucideLayoutDashboard,
   MessageSquare,
   MusicIcon,
-  VideoIcon,
+  Settings,
 } from "lucide-react";
 import PageHeading from "@/components/pageHeading";
 
@@ -28,13 +27,6 @@ const tools = [
     color: "text-violet-500",
   },
   {
-    title: "Video Generation",
-    href: "/video",
-    icon: VideoIcon,
-    bgColor: "bg-orange-500/10",
-    color: "text-orange-500",
-  },
-  {
     title: "Audio Generation",
     href: "/audio",
     icon: MusicIcon,
@@ -47,6 +39,13 @@ const tools = [
     icon: CodeIcon,
     bgColor: "bg-pink-500/10",
     color: "text-pink-500",
+  },
+  {
+    title: "Settings",
+    href: "/setting",
+    icon: Settings,
+    bgColor: "bg-slate-500/10",
+    color: "text-slate-500",
   },
 ];
 

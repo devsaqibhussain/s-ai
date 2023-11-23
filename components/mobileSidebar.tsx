@@ -3,7 +3,12 @@ import { LucideMenu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import SideBar from "./sidebar";
 
-const MobileSidebar = () => {
+interface MobileSidebarProps {
+  counter: number;
+  isPro: boolean;
+}
+
+const MobileSidebar = ({ counter, isPro }: MobileSidebarProps) => {
   return (
     <div className=" md:hidden">
       <Sheet>
@@ -11,7 +16,7 @@ const MobileSidebar = () => {
           <LucideMenu />
         </SheetTrigger>
         <SheetContent side={"left"} className="p-0 w-72">
-          <SideBar />
+          <SideBar counter={counter} isPro={isPro} />
         </SheetContent>
       </Sheet>
     </div>

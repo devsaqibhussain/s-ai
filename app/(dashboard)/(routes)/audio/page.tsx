@@ -1,15 +1,14 @@
 "use client";
-import { Download, LucideImage, LucideSend } from "lucide-react";
+import { LucideMusic, LucideSend } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import OpenAI from "openai";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
 import PageHeading from "@/components/pageHeading";
-import { amountOptions, formSchema, resolutionOption } from "./constants";
+import { formSchema, formatOption, voiceOptions } from "./constants";
 import Empty from "@/components/empty";
 import LoadingState from "@/components/loadingState";
 import { Button } from "@/components/ui/button";
@@ -28,15 +27,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardFooter } from "@/components/ui/card";
-import Image from "next/image";
 import { useProModal } from "@/hooks/useProModal";
 import { useToast } from "@/components/ui/use-toast";
 
-const ImagePage = () => {
+const AudioPage = () => {
   const { toast } = useToast();
   const router = useRouter();
-  const [images, setImages] = useState<string[]>([]);
+  const [audio, setAudio] = useState();
   const [justLoaded, setJustLoaded] = useState(true);
   const proModal = useProModal();
 
@@ -44,8 +41,8 @@ const ImagePage = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       prompt: "",
-      amount: "1",
-      resolution: "512x512",
+      voice: "alloy",
+      format: "mp3",
     },
   });
 
@@ -54,13 +51,10 @@ const ImagePage = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setJustLoaded(false);
-      setImages([]);
 
-      const response = await axios.post("/api/image", values);
+      const response = await axios.post("/api/audio", values);
 
-      const urls = response.data.map((image: { url: string }) => image.url);
-
-      setImages(urls);
+      setAudio(response.data.path);
 
       form.reset();
     } catch (error: any) {
@@ -77,41 +71,31 @@ const ImagePage = () => {
       router.refresh();
     }
   };
+
   return (
     <div className="h-[94%] flex flex-col">
       <PageHeading
-        title="Image Generation"
-        description="Use prompts to generate AI images"
-        icon={LucideImage}
-        color="text-pink-500"
-        bgColor="bg-pink-800/10"
+        title="Audio Generation"
+        description="Use AI for text-to-speech"
+        icon={LucideMusic}
+        color="text-red-500"
+        bgColor="bg-red-500/10"
         margin="m-4"
       />
 
       <div className=" flex-1 border-2 border-slate-600/20 rounded-xl p-4 m-4 flex flex-col gap-4 overflow-scroll">
+        <p className=" text-muted-foreground text-center text-sm">
+          Note: We currently allow only one text-to-speech command, if you want
+          to create multiple audio files you will have to reload the application
+        </p>
         {justLoaded && <Empty />}
-        <div className="grid grid-cols- sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {images.map((src, index) => (
-            <Card
-              key={index}
-              className="overflow-hidden flex flex-col justify-center shadow-sm hover:shadow-lg"
-            >
-              <div className="relative aspect-square">
-                <Image src={src} alt="AI generated image" fill />
-              </div>
-              <CardFooter>
-                <Button
-                  variant="secondary"
-                  className="w-full mt-2"
-                  onClick={() => window.open(src)}
-                >
-                  <Download className="mr-2" />
-                  Download
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+        {audio && (
+          <div>
+            <audio controls className="rounded-lg w-full mt-10">
+              <source src={audio} />
+            </audio>
+          </div>
+        )}
         {isLoading && <LoadingState />}
       </div>
 
@@ -127,7 +111,7 @@ const ImagePage = () => {
               <FormItem className=" col-span-12 lg:col-span-7">
                 <FormControl>
                   <Input
-                    placeholder="Image prompt here..."
+                    placeholder="Audio prompt here..."
                     disabled={isLoading}
                     type="text"
                     {...field}
@@ -140,7 +124,7 @@ const ImagePage = () => {
 
           <FormField
             control={form.control}
-            name="amount"
+            name="voice"
             render={({ field }) => (
               <FormItem className="col-span-6 lg:col-span-2">
                 <Select
@@ -155,7 +139,7 @@ const ImagePage = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {amountOptions.map((options, index) => (
+                    {voiceOptions.map((options, index) => (
                       <SelectItem key={index} value={options.value}>
                         {options.lable}
                       </SelectItem>
@@ -168,7 +152,7 @@ const ImagePage = () => {
 
           <FormField
             control={form.control}
-            name="resolution"
+            name="format"
             render={({ field }) => (
               <FormItem className=" col-span-6 lg:col-span-2">
                 <Select
@@ -183,7 +167,7 @@ const ImagePage = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {resolutionOption.map((options, index) => (
+                    {formatOption.map((options, index) => (
                       <SelectItem key={index} value={options.value}>
                         {options.label}
                       </SelectItem>
@@ -209,4 +193,4 @@ const ImagePage = () => {
   );
 };
 
-export default ImagePage;
+export default AudioPage;

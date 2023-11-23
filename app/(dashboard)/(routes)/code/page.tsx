@@ -16,13 +16,16 @@ import BotAvatar from "@/components/botAvatar";
 import Empty from "@/components/empty";
 import LoadingState from "@/components/loadingState";
 import MessageBar from "@/components/messageBar";
+import { useProModal } from "@/hooks/useProModal";
+import { useToast } from "@/components/ui/use-toast";
 
 const CodeGeneration = () => {
+  const {toast} = useToast()
   const router = useRouter();
   const [messages, setMessages] = useState<OpenAI.ChatCompletionMessageParam[]>(
     []
   );
-
+  const proModal = useProModal();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,10 +48,17 @@ const CodeGeneration = () => {
         messages: newMessages,
       });
       setMessages((current) => [...current, response.data]);
-      console.log(messages);
       form.reset();
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      }else {
+        toast({
+          variant: "destructive",
+          title: "Something went wrong.",
+          description: `${error.message}`,
+        });
+      }
     } finally {
       router.refresh();
     }
@@ -78,7 +88,7 @@ const CodeGeneration = () => {
                   </div>
                 ),
                 code: ({ node, ...props }) => (
-                  <code className="bg-slate-600/20 rounded-lg p-1" {...props} />
+                  <code className="bg-slate-600/10 rounded-lg p-1" {...props} />
                 ),
               }}
               className="text-sm overflow-hidden leading-7 mt-2"

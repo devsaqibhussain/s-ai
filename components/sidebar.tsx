@@ -7,12 +7,13 @@ import {
   LayoutDashboardIcon,
   MessageSquare,
   MusicIcon,
-  VideoIcon,
+  Settings,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import CountProgressBar from "./countProgressBar";
 
 const tools = [
   {
@@ -37,13 +38,6 @@ const tools = [
     color: "text-pink-500",
   },
   {
-    title: "Video Generation",
-    href: "/video",
-    icon: VideoIcon,
-    bgColor: "bg-orange-500/10",
-    color: "text-orange-500",
-  },
-  {
     title: "Audio Generation",
     href: "/audio",
     icon: MusicIcon,
@@ -57,42 +51,62 @@ const tools = [
     bgColor: "bg-violet-500/10",
     color: "text-violet-500",
   },
+  {
+    title: "Settings",
+    href: "/setting",
+    icon: Settings,
+    bgColor: "bg-slate-200/10",
+    color: "text-slate-200",
+  },
 ];
 
-const SideBar = () => {
+interface SideBarProps {
+  counter: number;
+  isPro: boolean;
+}
+
+const SideBar = ({ counter, isPro }: SideBarProps) => {
   const pathName = usePathname();
   return (
-    <div className="bg-slate-800 flex flex-col items-center w-72 h-full fixed">
-      <div className=" flex items-center space-x-2 w-full p-4">
-        <div className="relative w-10 h-10 ">
-          <Image src={"/logo.jpg"} alt="logo" fill className=" rounded-full" />
+    <div className="bg-slate-800 flex flex-col items-center justify-between w-72 h-full fixed">
+      <div>
+        <div className=" flex items-center space-x-2 w-full p-4">
+          <div className="relative w-10 h-10 ">
+            <Image
+              src={"/logo.jpg"}
+              alt="logo"
+              fill
+              className=" rounded-full"
+            />
+          </div>
+          <p className=" text-2xl font-extrabold text-white">S - AI</p>
         </div>
-        <p className=" text-2xl font-extrabold text-white">S - AI</p>
-      </div>
-      <div className=" w-full p-4 space-y-4">
-        {tools.map((tool) => (
-          <Link
-            href={tool.href}
-            key={tool.href}
-            className={cn(
-              `w-full p-2 flex space-x-4 items-center rounded-xl hover:bg-slate-500/10 transition ${
-                pathName === tool.href && tool.bgColor
-              }`
-            )}
-          >
-            <div
+        <div className=" w-full p-4 space-y-4">
+          {tools.map((tool) => (
+            <Link
+              href={tool.href}
+              key={tool.href}
               className={cn(
-                " relative h-10 w-10 p-2 rounded-xl",
-                tool.color,
-                tool.bgColor
+                `w-full p-2 flex space-x-4 items-center rounded-xl hover:bg-slate-500/10 transition ${
+                  pathName === tool.href && tool.bgColor
+                }`
               )}
             >
-              <tool.icon />
-            </div>
-            <p className={cn(" text-lg", tool.color)}>{tool.title}</p>
-          </Link>
-        ))}
+              <div
+                className={cn(
+                  " relative h-10 w-10 p-2 rounded-xl",
+                  tool.color,
+                  tool.bgColor
+                )}
+              >
+                <tool.icon />
+              </div>
+              <p className={cn(" text-lg", tool.color)}>{tool.title}</p>
+            </Link>
+          ))}
+        </div>
       </div>
+      {!isPro && <CountProgressBar counter={counter} />}
     </div>
   );
 };

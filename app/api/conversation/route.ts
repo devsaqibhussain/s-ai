@@ -2,6 +2,9 @@ import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+import { CheckApiCount, IncrementCount } from "@/lib/db/databaseFunctions";
+import { isSubscribed } from "@/lib/subscription";
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -29,11 +32,20 @@ export const POST = async (req: Request) => {
     if (!messages) {
       return new NextResponse("Messages are required", { status: 400 });
     }
+    const freeTrial = await CheckApiCount();
+    const isPro = await isSubscribed();
 
+    if (!freeTrial && !isPro) {
+      return new NextResponse("Free Trial has expired!", { status: 403 });
+    }
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [intructionMessage, ...messages],
     });
+
+    if (!isPro) {
+      await IncrementCount();
+    }
 
     return NextResponse.json(response.choices[0].message);
   } catch (error) {
